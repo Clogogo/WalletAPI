@@ -8,7 +8,6 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -16,8 +15,7 @@ import java.time.LocalDate;
 @Table(name = "userinfo")
 public class UserInfo {
 
-    //User/info
-
+    //User/inf
 
     @Id
     @Column(name = "id", nullable = false)
@@ -28,14 +26,14 @@ public class UserInfo {
     //minLength: 3
     //example: john12345
     //Unique User ID in the Operator’s system.
-    // In case of DEMO gameplay, this parameter may be omitted.
     @Column(name = "name", nullable = false)
-    private String name;
+    private String user;
 
 
-//    //example: CTS_SUCCESS
-//    //[ RS_OK, RS_NOTFOUND ]
-//    private String status;
+    //    //example: CTS_SUCCESS
+    //[ RS_OK, RS_NOTFOUND ]
+    @Column(name = "status", nullable = false)
+    private String status;
 
     //"583c985f-fee6-4c0e-bbf5-308aad6265af"
     @Column(name = "request_id", nullable = false)

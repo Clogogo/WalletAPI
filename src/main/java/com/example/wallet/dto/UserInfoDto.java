@@ -13,7 +13,10 @@ public class UserInfoDto implements Serializable {
     private final Long id;
 
     @NotBlank(message = "The name is required.")
-    private final String name;
+    private final String user;
+
+    @NotBlank(message = "The status is required.")
+    private final String status;
 
     @NotBlank(message = "The request_id is required.")
     private final String request_uuid;
