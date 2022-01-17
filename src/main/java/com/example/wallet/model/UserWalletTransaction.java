@@ -5,12 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.sql.Timestamp;
-import java.util.UUID;
+import javax.persistence.*;
+
 
    /*
     Called when the User wins (credit).
@@ -36,14 +32,16 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "transaction")
-public class UserTransaction {
+public class UserWalletTransaction {
 
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     //john12345
-    private String username;
+    @Column(name = "name")
+    private String user;
 
     //16d2dcfe-b89e-11e7-854a-58404eea6d16
     private String transaction_uuid;
@@ -74,11 +72,13 @@ public class UserTransaction {
     private String reference_transaction_uuid;
 
 
+    private String status;
+
     //false
     private Boolean is_free;
 
     //false
-    private Boolean is_aggregate;
+    private Boolean is_aggregated;
 
     //  "game_code": "clt_dragonrising",
     private String game_code;
@@ -92,12 +92,18 @@ public class UserTransaction {
 
 
     //1000500
-    private Integer win_amount;
+    private Integer amount;
 
 
-    //win_amount + balance
-    private Integer new_balance;
+//    //win_amount + balance
+//    private Integer new_balance;
 
 
-
+    public UserWalletTransaction(String user, String status, String request_uuid, String currency, Integer amount) {
+        this.user = user;
+        this.status = status;
+        this.request_uuid = request_uuid;
+        this.currency = currency;
+        this.amount = amount;
+    }
 }

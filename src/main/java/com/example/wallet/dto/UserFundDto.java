@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class UserFundDto implements Serializable {
+public class UserFundDto {
     private final Long id;
     private final String user;
     private final String token;
