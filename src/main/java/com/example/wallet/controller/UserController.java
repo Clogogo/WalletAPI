@@ -1,6 +1,8 @@
 package com.example.wallet.controller;
 
 import com.example.wallet.Utilities.Status;
+import com.example.wallet.dto.WalletTransactionDto;
+import com.example.wallet.mapper.TransactionMapper;
 import com.example.wallet.model.UserFund;
 import com.example.wallet.model.UserInfo;
 import com.example.wallet.model.WalletTransaction;
@@ -31,6 +33,12 @@ public class UserController {
 
     @Autowired
     private TransactionRepo transactionRepo;
+
+
+    private WalletTransactionDto transactionDto;
+
+
+    private TransactionMapper transactionMapper;
 
 
     /*
@@ -80,10 +88,10 @@ public class UserController {
             user.setPreviousBalance(user.getBalance());
             user.setBalance(user.getBalance() + transaction.getAmount());
             transactionRepo.save(user);
-            return new WalletTransaction(user.getUser(), user.getStatus(), user.getRequest_uuid(), user.getCurrency(), user.getAmount());
+            return user;
         } else {
             transaction.setStatus(String.valueOf(Status.RS_ERROR_INVALID_TOKEN));
-            return new WalletTransaction(transaction.getUser(), transaction.getStatus(), transaction.getRequest_uuid(), transaction.getCurrency(), user.getAmount());
+            return user;
         }
     }
 
@@ -94,10 +102,10 @@ public class UserController {
             user.setRequest_uuid(transaction.getStatus());
             user.setBalance(user.getPreviousBalance());
             transactionRepo.save(user);
-            return new WalletTransaction(user.getUser(), user.getStatus(), user.getRequest_uuid(), user.getCurrency(), user.getAmount());
+            return user;
         } else {
             transaction.setStatus(String.valueOf(Status.RS_ERROR_INVALID_TOKEN));
-            return new WalletTransaction(transaction.getUser(), transaction.getStatus(), transaction.getRequest_uuid(), transaction.getCurrency(), user.getAmount());
+            return user;
         }
     }
 }
