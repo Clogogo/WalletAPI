@@ -32,7 +32,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "transaction")
-public class UserWalletTransaction {
+public class WalletTransaction {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -90,16 +90,19 @@ public class UserWalletTransaction {
     //nullable true
     private String bet;
 
-
     //1000500
     private Integer amount;
+
+    private Integer balance;
+
+    private Integer previousBalance;
 
 
 //    //win_amount + balance
 //    private Integer new_balance;
 
 
-    public UserWalletTransaction(String user, String status, String request_uuid, String currency, Integer amount) {
+    public WalletTransaction(String user, String status, String request_uuid, String currency, Integer amount) {
         this.user = user;
         this.status = status;
         this.request_uuid = request_uuid;

@@ -3,9 +3,9 @@ package com.example.wallet.controller;
 import com.example.wallet.Utilities.Status;
 import com.example.wallet.model.UserFund;
 import com.example.wallet.model.UserInfo;
-import com.example.wallet.model.UserWalletTransaction;
+import com.example.wallet.model.WalletTransaction;
 import com.example.wallet.repository.UserFundRepo;
-import com.example.wallet.repository.UserTransactionRepo;
+import com.example.wallet.repository.TransactionRepo;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class UserController {
     private UserFundRepo userFundRepo;
 
     @Autowired
-    private UserTransactionRepo transactionRepo;
+    private TransactionRepo transactionRepo;
 
 
     /*
@@ -73,16 +73,31 @@ public class UserController {
 
 
     @PostMapping("/transaction/win")
-    public UserWalletTransaction processUserWin(@RequestBody UserWalletTransaction transaction) {
-        UserWalletTransaction user = transactionRepo.findByUser(transaction.getUser());
+    public WalletTransaction processUserWin(@RequestBody WalletTransaction transaction) {
+        WalletTransaction user = transactionRepo.findByUser(transaction.getUser());
         if (transaction.getToken().equals(user.getToken()) && !user.getTransaction_uuid().equals(transaction.getTransaction_uuid())) {
             user.setRequest_uuid(transaction.getStatus());
-            user.setAmount(user.getAmount() + transaction.getAmount());
+            user.setPreviousBalance(user.getBalance());
+            user.setBalance(user.getBalance() + transaction.getAmount());
             transactionRepo.save(user);
-            return new UserWalletTransaction(user.getUser(), user.getStatus(), user.getRequest_uuid(), user.getCurrency(), user.getAmount());
+            return new WalletTransaction(user.getUser(), user.getStatus(), user.getRequest_uuid(), user.getCurrency(), user.getAmount());
         } else {
             transaction.setStatus(String.valueOf(Status.RS_ERROR_INVALID_TOKEN));
-            return new UserWalletTransaction(transaction.getUser(), transaction.getStatus(), transaction.getRequest_uuid(), transaction.getCurrency(), user.getAmount());
+            return new WalletTransaction(transaction.getUser(), transaction.getStatus(), transaction.getRequest_uuid(), transaction.getCurrency(), user.getAmount());
+        }
+    }
+
+    @PostMapping("/transaction/rollback")
+    public WalletTransaction processRollback(@RequestBody WalletTransaction transaction) {
+        WalletTransaction user = transactionRepo.findByUser(transaction.getUser());
+        if (transaction.getToken().equals(user.getToken()) && !user.getTransaction_uuid().equals(transaction.getTransaction_uuid())) {
+            user.setRequest_uuid(transaction.getStatus());
+            user.setBalance(user.getPreviousBalance());
+            transactionRepo.save(user);
+            return new WalletTransaction(user.getUser(), user.getStatus(), user.getRequest_uuid(), user.getCurrency(), user.getAmount());
+        } else {
+            transaction.setStatus(String.valueOf(Status.RS_ERROR_INVALID_TOKEN));
+            return new WalletTransaction(transaction.getUser(), transaction.getStatus(), transaction.getRequest_uuid(), transaction.getCurrency(), user.getAmount());
         }
     }
 }
