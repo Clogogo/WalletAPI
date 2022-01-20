@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -36,10 +35,6 @@ public class WalletTransaction {
     //55b7518e-b89e-11e7-81be-58404eea6d16
     @Column(name = "token", nullable = false)
     private String token;
-
-
-//    @Column(name = "token", nullable = false)
-//    private String token = new GenerateToken().getToken();
 
     //cg_45141
     @Column(name = "sup_user", nullable = false)
@@ -101,11 +96,8 @@ public class WalletTransaction {
     @Column(name = "pre_Balance", nullable = false)
     private Integer previousBalance;
 
-    @Column(name = "bet_active", nullable = false)
-    private Boolean betActive;
-
-    public WalletTransaction(Status rsErrorUserInvalid) {
-        this.status = String.valueOf(rsErrorUserInvalid);
+    public WalletTransaction(Status status) {
+        this.status = String.valueOf(status);
     }
 
 }

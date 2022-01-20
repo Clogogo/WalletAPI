@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TransactionRepo extends JpaRepository<WalletTransaction, Long> {
     WalletTransaction findByUser(String user);
-
-
+    WalletTransaction findNameById(Long valueOf);
 }

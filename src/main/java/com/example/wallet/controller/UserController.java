@@ -9,7 +9,7 @@ import com.example.wallet.mapper.UserInfoMapper;
 import com.example.wallet.model.UserBalance;
 import com.example.wallet.model.UserInfo;
 import com.example.wallet.model.WalletTransaction;
-import com.example.wallet.service.UserInfoService;
+import com.example.wallet.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class UserController {
     UserBalance userBalance;
 
     @Autowired
-    UserInfoService userInfoService;
+    UserService userService;
 
 
     /*
@@ -42,7 +42,7 @@ public class UserController {
      */
     @PostMapping(value = "/user/info")
     public UserInfoDto returnUserInfo(@RequestBody UserInfoDto userInfo) {
-        UserInfo user = userInfoService.returnUserInfo(userInfo);
+        UserInfo user = userService.returnUserInfo(userInfo);
         return userInfoMapper.toDto(user);
     }
 
@@ -51,21 +51,21 @@ public class UserController {
      */
     @PostMapping("/user/balance")
     public BalanceDto returnUserBalance(@RequestBody WalletTransactionDto info) {
-        WalletTransaction user = userInfoService.returnBalance(info);
+        WalletTransaction user = userService.returnBalance(info);
         return balanceMapper.toBalanceDto(user);
     }
 
 
     @PostMapping("/transaction/win")
     public BalanceDto processUserWin(@RequestBody WalletTransactionDto transaction) {
-        WalletTransaction user = userInfoService.processWin(transaction);
+        WalletTransaction user = userService.processWin(transaction);
         return balanceMapper.toBalanceDto(user);
     }
 
 
     @PostMapping("/transaction/rollback")
     public BalanceDto processRollback(@RequestBody WalletTransactionDto transaction) {
-        WalletTransaction user = userInfoService.processRollback(transaction);
+        WalletTransaction user = userService.processRollback(transaction);
         return balanceMapper.toBalanceDto(user);
 
     }
@@ -73,7 +73,7 @@ public class UserController {
 
     @PostMapping("/transaction/bet")
     public BalanceDto processBet(@RequestBody WalletTransactionDto transaction) {
-        WalletTransaction user = userInfoService.processBet(transaction);
+        WalletTransaction user = userService.processBet(transaction);
         return balanceMapper.toBalanceDto(user);
     }
 
