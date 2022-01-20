@@ -8,9 +8,6 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class UserInfoDto {
 
-    @NotBlank(message = "The id is required.")
-    private final Long id;
-
     @NotBlank(message = "The name is required.")
     private final String user;
 

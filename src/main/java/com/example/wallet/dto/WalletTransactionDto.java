@@ -2,11 +2,10 @@ package com.example.wallet.dto;
 
 import lombok.Data;
 
-import java.io.Serializable;
 
 @Data
-public class WalletTransactionDto implements Serializable {
-    private final Long id;
+public class WalletTransactionDto {
+
     private final String user;
     private final String transaction_uuid;
     private final String supplier_transaction_id;
@@ -26,4 +25,6 @@ public class WalletTransactionDto implements Serializable {
     private final Integer amount;
     private final Integer balance;
     private final Integer previousBalance;
+
+
 }

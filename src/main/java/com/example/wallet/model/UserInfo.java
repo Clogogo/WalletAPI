@@ -1,12 +1,12 @@
 package com.example.wallet.model;
 
+import com.example.wallet.Utilities.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,8 +24,6 @@ public class UserInfo {
 
     //userstring
     //minLength: 3
-    //example: john12345
-    //Unique User ID in the Operator’s system.
     @Column(name = "name", nullable = false)
     private String user;
 
@@ -59,7 +57,7 @@ public class UserInfo {
     @Column(name = "ROB", nullable = false)
     private LocalDate registration_date;
 
-    //"VIP", "Affiliate"
+    //"VIP"
     @Column(name = "tags", nullable = false)
     private String tags;
 
@@ -71,4 +69,7 @@ public class UserInfo {
     @Column(name = "affiliate_id", nullable = false)
     private String affiliate_id;
 
+    public UserInfo(Status rsErrorUserInvalid) {
+        this.status = String.valueOf(rsErrorUserInvalid);
+    }
 }

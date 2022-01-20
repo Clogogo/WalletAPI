@@ -5,7 +5,6 @@ import com.example.wallet.model.UserInfo;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
