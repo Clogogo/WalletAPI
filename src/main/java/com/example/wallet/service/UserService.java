@@ -41,71 +41,84 @@ public class UserService {
 
     public WalletTransaction returnBalance(WalletTransactionDto transaction) {
 
-        WalletTransaction user = transactionRepo.findByUser(transaction.getUser());
+        try {
+            WalletTransaction user = transactionRepo.findByUser(transaction.getUser());
 
-        if (!transaction.getUser().equals(user.getUser())) {
+            if (!transaction.getUser().equals(user.getUser())) {
+                return new WalletTransaction(Status.RS_ERROR_USER_INVALID);
+            } else if (!user.getToken().equals(transaction.getToken()) || transaction.getToken().isEmpty()) {
+                return new WalletTransaction(Status.RS_ERROR_INVALID_TOKEN);
+            } else if (transaction.getRequest_uuid().isEmpty() || !transaction.getRequest_uuid().equals(user.getRequest_uuid())) {
+                return new WalletTransaction(Status.RS_ERROR_TRANSACTION_DOES_NOT_EXIST);
+            }
+            user.setRequest_uuid(transaction.getRequest_uuid());
+            user.setGame_code(transaction.getGame_code());
+            return transactionRepo.save(user);
+        } catch (Exception ex) {
             return new WalletTransaction(Status.RS_ERROR_USER_INVALID);
-        } else if (!user.getToken().equals(transaction.getToken()) || transaction.getToken().isEmpty()) {
-            return new WalletTransaction(Status.RS_ERROR_INVALID_TOKEN);
-        } else if (transaction.getRequest_uuid().isEmpty() || !transaction.getRequest_uuid().equals(user.getRequest_uuid())) {
-            return new WalletTransaction(Status.RS_ERROR_TRANSACTION_DOES_NOT_EXIST);
         }
-        user.setRequest_uuid(transaction.getRequest_uuid());
-        user.setGame_code(transaction.getGame_code());
-        return transactionRepo.save(user);
     }
 
+
     public WalletTransaction processBet(WalletTransactionDto transaction) {
+        try {
+            WalletTransaction user = transactionRepo.findByUser(transaction.getUser());
 
-        WalletTransaction user = transactionRepo.findByUser(transaction.getUser());
-
-        if (user.getBalance() <= transaction.getAmount()) {
-            return new WalletTransaction(Status.RS_ERROR_NOT_ENOUGH_MONEY);
+            if (user.getBalance() <= transaction.getAmount()) {
+                return new WalletTransaction(Status.RS_ERROR_NOT_ENOUGH_MONEY);
+            }
+            if (user.getTransaction_uuid().equals(transaction.getTransaction_uuid())) {
+                return new WalletTransaction(Status.RS_ERROR_DUPLICATE_TRANSACTION);
+            }
+            user.setUser(transaction.getUser());
+            user.setPreviousBalance(user.getBalance());
+            user.setBalance(user.getBalance() - transaction.getAmount());
+            user.setRound_closed(false);
+            user.setGame_code(transaction.getGame_code());
+            user.setTransaction_uuid(transaction.getTransaction_uuid());
+            user.setReference_transaction_uuid(transaction.getTransaction_uuid());
+            user.setTransaction_uuid(transaction.getTransaction_uuid());
+            return transactionRepo.save(user);
+        } catch (Exception ex) {
+            return new WalletTransaction(Status.RS_ERROR_USER_INVALID);
         }
-        if (user.getTransaction_uuid().equals(transaction.getTransaction_uuid())) {
-            return new WalletTransaction(Status.RS_ERROR_DUPLICATE_TRANSACTION);
-        }
-        user.setUser(transaction.getUser());
-        user.setPreviousBalance(user.getBalance());
-        user.setBalance(user.getBalance() - transaction.getAmount());
-        user.setRound_closed(false);
-        user.setGame_code(transaction.getGame_code());
-        user.setTransaction_uuid(transaction.getTransaction_uuid());
-        user.setReference_transaction_uuid(transaction.getTransaction_uuid());
-        user.setTransaction_uuid(transaction.getTransaction_uuid());
-        return transactionRepo.save(user);
 
     }
 
     public WalletTransaction processRollback(WalletTransactionDto transaction) {
-
-
-        WalletTransaction user = transactionRepo.findNameById(1L);
-        if (user.getToken().equals(transaction.getToken()) &&
-                user.getReference_transaction_uuid().equals(transaction.getReference_transaction_uuid())) {
-            user.setBalance(user.getPreviousBalance());
-            user.setRound_closed(true);
-            return transactionRepo.save(user);
-        } else {
-            return new WalletTransaction(Status.RS_ERROR_UNKNOWN);
+        try {
+            WalletTransaction user = transactionRepo.findByUser(transaction.getUser());
+            if (user.getToken().equals(transaction.getToken()) &&
+                    user.getReference_transaction_uuid().equals(transaction.getReference_transaction_uuid())) {
+                user.setBalance(user.getPreviousBalance());
+                user.setRound_closed(true);
+                return transactionRepo.save(user);
+            } else {
+                return new WalletTransaction(Status.RS_ERROR_UNKNOWN);
+            }
+        } catch (Exception ex) {
+            return new WalletTransaction(Status.RS_ERROR_USER_INVALID);
         }
 
     }
 
 
     public WalletTransaction processWin(WalletTransactionDto transaction) {
-
-        WalletTransaction user = transactionRepo.findNameById(1L);
-        Status status = validateTransactionCheck(transaction, user);
-        if (status.equals(Status.RS_OK) && user.getTransaction_uuid().equals(user.getReference_transaction_uuid())) {
-            user.setPreviousBalance(user.getBalance());
-            user.setBalance(user.getBalance() + transaction.getAmount());
-            user.setStatus(String.valueOf(status));
-            user.setReference_transaction_uuid(transaction.getTransaction_uuid());
-            user.setRound_closed(true);
-            return transactionRepo.save(user);
-        } else {
-            return new WalletTransaction(status);
+        try {
+            WalletTransaction user = transactionRepo.findByUser(transaction.getUser());
+            Status status = validateTransactionCheck(transaction, user);
+            if (status.equals(Status.RS_OK) && user.getTransaction_uuid().equals(transaction.getTransaction_uuid())) {
+                user.setPreviousBalance(user.getBalance());
+                user.setBalance(user.getBalance() + transaction.getAmount());
+                user.setStatus(String.valueOf(status));
+                user.setReference_transaction_uuid(transaction.getTransaction_uuid());
+                user.setRound_closed(true);
+                return transactionRepo.save(user);
+            } else {
+                return new WalletTransaction(status);
+            }
+        } catch (Exception ex) {
+            return new WalletTransaction(Status.RS_ERROR_USER_INVALID);
         }
     }
 

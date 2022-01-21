@@ -1,6 +1,6 @@
 package com.example.wallet.Utilities;
 
-public class converter {
+public class Converter {
 
 
     public Integer convertFromInteger(Integer amount) {
